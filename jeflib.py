@@ -74,25 +74,25 @@ def downloadFile(url,name="|",overwrite=False,NotFoundCrash=True,LostConnectionC
             logging.debug("You already have, "+name+", not downloading (force download by setting overwrite=True)")
     if overwrite:
         try:
-                try:
-                    # Download the file from `url` and save it locally under `name`:
-                    with urllib.request.urlopen(url) as response, open(name, 'wb') as out_file:
-                        shutil.copyfileobj(response, out_file)
-                except ValueError: #if http / https is not supplied, give http (will redirect to https if availiable)
-                    with urllib.request.urlopen("http://"+url) as response, open(name, 'wb') as out_file:
-                        shutil.copyfileobj(response, out_file)
-                with open(name,"rb") as contents:
-                    contents=contents.read()
-            except urllib.error.HTTPError as e:
-                if not NotFoundCrash:
-                    logging.error(url+" is not a file")
-                else:
-                    raise WebError(url+" is not a file")
-            except urllib.error.URLError:
-                if not NotFoundCrash:
-                    logging.error(url+"'s host was not found")
-                else:
-                    raise WebError(url+"'s host was not found")
+            try:
+                # Download the file from `url` and save it locally under `name`:
+                with urllib.request.urlopen(url) as response, open(name, 'wb') as out_file:
+                    shutil.copyfileobj(response, out_file)
+            except ValueError: #if http / https is not supplied, give http (will redirect to https if availiable)
+                with urllib.request.urlopen("http://"+url) as response, open(name, 'wb') as out_file:
+                    shutil.copyfileobj(response, out_file)
+            with open(name,"rb") as contents:
+                contents=contents.read()
+        except urllib.error.HTTPError as e:
+            if not NotFoundCrash:
+                logging.error(url+" is not a file")
+            else:
+                raise WebError(url+" is not a file")
+        except urllib.error.URLError:
+            if not NotFoundCrash:
+                logging.error(url+"'s host was not found")
+            else:
+                raise WebError(url+"'s host was not found")
 
 def createFile(filename,contents,overwite=False): #creates a file if it does not exits, otherwise does nothing
     if not os.path.exists(filename) or overwite==True:
